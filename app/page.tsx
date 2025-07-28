@@ -1,18 +1,41 @@
 import Image from "next/image";
+
 import styles from "./page.module.css";
 import logo from "@/public/images/joinLogo.png";
+import AuthForm from "@/components/auth/auth-form";
+import Button from "@/ui/Button";
 
-export default function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: { mode?: string };
+}) {
+  const params = await searchParams;
+  const mode: "login" | "signup" =
+    params.mode === "signup" ? "signup" : "login";
   return (
     <main className={styles["login-main"]}>
       <div>
-        <Image className={styles["logo-img"]} src={logo} alt="Logo Image" />
-        <div className={styles["container-signup"]}>
-          <p>Not a Join user?</p>
-          <button disabled={false} className={styles["btn-style"]}>
-            Sign up
-          </button>
-        </div>
+        <Image
+          width={100}
+          height={100}
+          priority
+          className={styles["logo-img"]}
+          src={logo}
+          alt="Logo Image"
+        />
+        {mode === "login" && (
+          <div className={styles["container-signup"]}>
+            <p>Not a Join user?</p>
+            <Button className={styles["btn-style"]} href="?mode=signup">
+              Sign up
+            </Button>
+          </div>
+        )}
+        <AuthForm
+          mode={mode}
+          oversign={mode === "signup" ? "Sign up" : "Login"}
+        />
       </div>
     </main>
   );

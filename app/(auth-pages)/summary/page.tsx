@@ -16,7 +16,7 @@ export default function SummaryPage() {
   }
 
   return (
-    <section className={styles["container"]}>
+    <main className={styles["container"]}>
       <header className={styles["oversign"]}>
         <h1>Join 360</h1>
         <div className={styles["dash"]}></div>
@@ -42,6 +42,6 @@ export default function SummaryPage() {
           <h4>Sebastian Ebel</h4>
         </div>
       </main>
-    </section>
+    </main>
   );
 }

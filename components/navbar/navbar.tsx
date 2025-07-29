@@ -18,7 +18,7 @@ export default function Navbar() {
 
   const navItems = [
     { name: "Summary", path: `/summary`, img: summary },
-    { name: "Add Task", path: `/addTask`, img: addTask },
+    { name: "Add Task", path: `/addtask`, img: addTask },
     { name: "Board", path: `/board`, img: board },
     { name: "Contacts", path: `/contacts`, img: contacts },
   ];

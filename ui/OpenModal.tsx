@@ -5,7 +5,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { createPortal } from "react-dom";
 
 interface OpenModalProps {
   children: React.ReactNode;
@@ -53,18 +52,14 @@ const OpenModal = forwardRef<ModalHandle, OpenModalProps>(function OpenModal(
     }
   }
 
-  const modalRoot = document.getElementById("modal");
-
-  if (!modalRoot) return null;
-  return createPortal(
+  return (
     <dialog
       className={`${isOpen ? "dialog-open" : "dialog-close"}`}
       onClick={onClickOutsideHandler}
       ref={dialog}
     >
       {children}
-    </dialog>,
-    modalRoot
+    </dialog>
   );
 });
 export default OpenModal;

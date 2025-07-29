@@ -1,4 +1,5 @@
-import { stylesSelect } from "../../styles/stylesSelect";
+"use client";
+import { stylesSelect } from "@/constants/selectbox-style";
 import Select, {
   ActionMeta,
   GroupBase,
@@ -49,27 +50,18 @@ type SelectBoxProps = {
     | undefined;
 };
 
-export default function SelectBox({
-  options,
-  placeholder,
-  isMulti,
-  isSearchable,
-  noOptionsMessage,
-  onChange,
-  value,
-  id,
-}: SelectBoxProps) {
+export default function SelectBox({ ...props }: SelectBoxProps) {
   return (
     <Select
-      id={id}
-      value={value}
-      options={options}
-      onChange={onChange}
-      placeholder={placeholder}
-      isMulti={isMulti}
+      id={props.id}
+      value={props.value}
+      options={props.options}
+      onChange={props.onChange}
+      placeholder={props.placeholder}
+      isMulti={props.isMulti}
       styles={stylesSelect}
-      isSearchable={isSearchable}
-      noOptionsMessage={noOptionsMessage}
+      isSearchable={props.isSearchable}
+      noOptionsMessage={props.noOptionsMessage}
     />
   );
 }

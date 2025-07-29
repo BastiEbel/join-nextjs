@@ -1,5 +1,4 @@
 import { ChangeEvent, InputHTMLAttributes, ReactNode, useRef } from "react";
-import styles from "./css/FormTask.module.css";
 import Image, { StaticImageData } from "next/image";
 
 type InputProps = {
@@ -38,7 +37,7 @@ export default function Input({
   const inputRef = useRef<HTMLInputElement>(null);
   const inputId = name || placeholder || type;
   const inputProps: InputHTMLAttributes<HTMLInputElement> = {
-    id: inputId,
+    id: name || inputId,
     name,
     placeholder,
     className,
@@ -68,10 +67,16 @@ export default function Input({
         {icon && labelText ? (
           <div
             style={{ marginTop: "8px", width: "440px" }}
-            className={styles["container-input"]}
+            /* className={styles["container-input"]} */
           >
             <input ref={inputRef} {...inputProps} />
-            <Image src={icon} alt="Logo for Input" />
+            <Image
+              width={24}
+              height={24}
+              priority
+              src={icon}
+              alt="Logo for Input"
+            />
           </div>
         ) : (
           <>

@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import styles from "./page.module.css";
 import logo from "@/public/images/joinLogo.png";
-import AuthForm from "@/components/auth/auth-form";
+import AuthForm from "@/components/auth-form/auth-form";
 import Button from "@/ui/Button";
 
 export default async function Home({

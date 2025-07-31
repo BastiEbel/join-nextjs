@@ -7,7 +7,7 @@ export const stylesSelect: StylesConfig<
   control: (base) => ({
     ...base,
     width: "440px",
-    height: "auto",
+    height: "48px",
     padding: "0px 16px 0px 16px",
     boxSizing: "border-box",
     borderRadius: "10px",

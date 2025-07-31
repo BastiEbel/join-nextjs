@@ -2,8 +2,26 @@ import SummaryContainer from "@/components/summary-container/summary-container";
 import styles from "./page.module.css";
 
 import { summaryData } from "@/utils/summary-data";
+import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
+import { prisma } from "@/lib/auth-prisma";
 
-export default function SummaryPage() {
+export default async function SummaryPage() {
+  const cookieStore = await cookies();
+  const sessionId = cookieStore.get("sessionId")?.value;
+
+  let user = null;
+  if (sessionId) {
+    const session = await prisma.session.findUnique({
+      where: { sid: sessionId },
+    });
+    if (session) {
+      user = await prisma.user.findUnique({ where: { id: session.userId } });
+    }
+  }
+  if (!user) {
+    redirect("/");
+  }
   function greetingHandler() {
     const hour = new Date().getHours();
     if (hour < 12) {

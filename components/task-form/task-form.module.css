@@ -63,10 +63,6 @@
   padding: 32px;
 }
 
-.input-icon-date:hover {
-  cursor: pointer;
-}
-
 .add-category-btn {
   height: 30px;
   display: flex;
@@ -98,7 +94,7 @@
   flex-direction: column;
   justify-content: space-between;
   width: 440px;
-  height: 416px;
+  height: 376px;
 }
 
 .selectDate {

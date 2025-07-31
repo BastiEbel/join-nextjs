@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useActionState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import Input from "@/ui/Input";
@@ -11,6 +11,12 @@ import { ToastContainer } from "react-toastify";
 import styles from "./login.module.css";
 import leftArrowIcon from "@/public/images/arrowLeft.png";
 import { inputFields } from "@/constants/input-field";
+import { auth } from "@/actions/auth-action";
+
+type FormState = {
+  errors?: { [key: string]: string };
+  formData?: FormData | undefined;
+};
 
 type AuthFormProps = {
   mode: "login" | "signup";
@@ -22,6 +28,12 @@ export default function AuthForm({ mode, oversign }: AuthFormProps) {
   const [isFocused, setIsFocused] = useState<{ [key: string]: boolean }>({});
   const pathName = usePathname();
   const router = useRouter();
+  const [formState, formActions] = useActionState<FormState, FormData>(
+    async (prevState: FormState, formData: FormData) => {
+      return await auth(mode, prevState, formData);
+    },
+    {}
+  );
 
   function handleFocus(name: string) {
     setIsFocused((prev) => ({ ...prev, [name]: true }));
@@ -30,9 +42,10 @@ export default function AuthForm({ mode, oversign }: AuthFormProps) {
   function handleBlur(name: string) {
     setIsFocused((prev) => ({ ...prev, [name]: false }));
   }
+
   return (
     <>
-      <form className={styles["form-signIn"]}>
+      <form action={formActions} className={styles["form-signIn"]}>
         {mode === "signup" && (
           <Image
             width={32}
@@ -76,12 +89,16 @@ export default function AuthForm({ mode, oversign }: AuthFormProps) {
                     onBlur={() => handleBlur(inputProp.name)}
                   />
                 </div>
-                {inputProp.error && (
-                  <span className={styles["error"]}>{inputProp.error}</span>
-                )}
               </div>
             ))}
+          {formState.errors &&
+            Object.values(formState.errors).map((error, idx) => (
+              <span key={idx} className={styles["error"]}>
+                {error}
+              </span>
+            ))}
         </div>
+
         <div className={styles["container-btn"]}>
           {mode === "login" ? (
             <>

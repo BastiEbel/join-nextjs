@@ -1,6 +1,6 @@
-import { ContactData } from "../../types/ContactData";
 import Button from "./Button";
-import styles from "../css/InformationBox.module.css";
+import styles from "./css/information.module.css";
+import { ContactData } from "@/types/type-data";
 
 interface ContactInfoProps {
   info: ContactData;

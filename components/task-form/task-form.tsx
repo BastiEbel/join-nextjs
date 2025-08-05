@@ -20,7 +20,11 @@ import SelectBox from "@/ui/SelectBox";
 import Input from "@/ui/Input";
 import AddCategory from "./add-category";
 
-export default function TaskForm() {
+type TaskFormProps = {
+  onClose?: () => void;
+};
+
+export default function TaskForm({ onClose }: TaskFormProps) {
   const [changeStyling, setChangeStyling] = useState(btnStyling);
   const dialogRef = useRef<ModalHandle>(null);
   const [showMsg, setShowMsg] = useState(false);
@@ -116,6 +120,7 @@ export default function TaskForm() {
   }
 
   function onClearDataHandler() {
+    onClose?.();
     setChangeStyling(btnStyling);
     setShowMsg(false);
   }

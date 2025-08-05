@@ -7,12 +7,11 @@
 }
 
 .logo-img {
-  width: 6%;
-  height: auto;
   position: absolute;
   left: 5.35%;
   top: 4.81%;
-  animation: logo-animate 0.75s ease-in-out;
+  transform: translate(-50%, -50%);
+  animation: logo-animate 1.25s cubic-bezier(0.77, 0, 0.18, 1) forwards;
 }
 
 .container-signup {
@@ -55,18 +54,14 @@
 
 @keyframes logo-animate {
   0% {
-    width: 6%;
-    height: auto;
-    position: absolute;
-    left: calc(50% - 3%);
-    top: calc(50% - 4%);
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(2);
   }
   100% {
-    width: 6%;
-    height: auto;
-    position: absolute;
     left: 5.35%;
     top: 4.81%;
+    transform: translate(0, 0) scale(1);
   }
 }
 

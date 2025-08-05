@@ -1,3 +1,5 @@
+"use client";
+
 import { ChangeEvent, InputHTMLAttributes, ReactNode, useRef } from "react";
 import Image, { StaticImageData } from "next/image";
 

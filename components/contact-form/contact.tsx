@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import OpenModal, { ModalHandle } from "@/ui/OpenModal";
 import Button from "@/ui/Button";
 import Image from "next/image";
@@ -11,24 +11,24 @@ import AddOrEditContact from "./add-or-edit";
 import ContactList from "./contact-list";
 import ContactInfo from "./contact-info";
 import { ContactData } from "@/types/type-data";
+import { getAllContacts } from "@/actions/get-data";
 
 export default function Contact() {
   const dialogRef = useRef<ModalHandle>(null);
 
-  // Replace with actual data fetching or mock data as needed
-  const contactData: Array<ContactData> = [
-    {
-      id: "1",
-      userId: "1",
-      name: "John Doe",
-      email: "john@example.com",
-      // Add other required fields if needed
-    },
-    // Add more contacts as needed
-  ];
+  const [contactData, setContactData] = useState<ContactData[]>([]);
   const [selectedContact, setSelectedContact] = useState<null | ContactData>(
     null
   );
+
+  useEffect(() => {
+    reloadContacts();
+  }, []);
+
+  async function reloadContacts() {
+    await getAllContacts().then(setContactData);
+    setSelectedContact(null);
+  }
 
   function onContactClickHandler(contact: ContactData) {
     setSelectedContact(contact);
@@ -49,7 +49,11 @@ export default function Contact() {
   return (
     <>
       <OpenModal ref={dialogRef}>
-        <AddOrEditContact onClose={onCloseHandler} addContact={true} />
+        <AddOrEditContact
+          onClose={onCloseHandler}
+          addContact={true}
+          onContactAdded={reloadContacts}
+        />
       </OpenModal>
 
       <nav className={styles["nav-contacts"]}>
@@ -78,8 +82,8 @@ export default function Contact() {
         <div className={styles["contact-info-text"]}>
           {selectedContact ? (
             <ContactInfo
+              onDeleteContact={reloadContacts}
               contactInfo={selectedContact as ContactData}
-              /* onDelete={() => setSelectedContact(null)} */
             />
           ) : (
             <p

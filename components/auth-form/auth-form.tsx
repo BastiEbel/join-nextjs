@@ -1,12 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useState, ChangeEvent, useActionState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useState, ChangeEvent, useActionState, useEffect } from "react";
+import { redirect, usePathname, useRouter } from "next/navigation";
 
 import Input from "@/ui/Input";
 import Button from "@/ui/Button";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 import styles from "./login.module.css";
 import leftArrowIcon from "@/public/images/arrowLeft.png";
@@ -16,6 +16,8 @@ import { auth } from "@/actions/auth-action";
 type FormState = {
   errors?: { [key: string]: string };
   formData?: FormData | undefined;
+  message?: string;
+  user?: string;
 };
 
 type AuthFormProps = {
@@ -34,6 +36,21 @@ export default function AuthForm({ mode, oversign }: AuthFormProps) {
     },
     {}
   );
+  useEffect(() => {
+    if (formState.message === "successful") {
+      toast.success(`Welcome ${formState.user}!`, {
+        autoClose: 1000,
+        onClose: () => {
+          redirect("/summary");
+        },
+      });
+    }
+    if (formState.errors) {
+      Object.values(formState.errors).forEach((error) => {
+        toast.error(error, { autoClose: 1000 });
+      });
+    }
+  }, [formState]);
 
   function handleFocus(name: string) {
     setIsFocused((prev) => ({ ...prev, [name]: true }));
@@ -102,7 +119,9 @@ export default function AuthForm({ mode, oversign }: AuthFormProps) {
         <div className={styles["container-btn"]}>
           {mode === "login" ? (
             <>
-              <Button className={styles["btn-login"]}>Log in</Button>
+              <Button type="submit" className={styles["btn-login"]}>
+                Log in
+              </Button>
               <Button className={styles["btn-guest"]}>Guest Log in</Button>
             </>
           ) : (

@@ -7,7 +7,7 @@ import styles from "./header.module.css";
 import Button from "@/ui/Button";
 import { logout } from "@/actions/auth-action";
 import { useEffect, useState } from "react";
-import { getCurrentUser } from "@/actions/get-user";
+import { getCurrentUser } from "@/actions/get-data";
 import { getInitials } from "@/utils/initials-character";
 import { UserData } from "@/types/type-data";
 

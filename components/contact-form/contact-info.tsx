@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 import styles from "./contact-info.module.css";
 import deleteItem from "@/public/images/delete.png";
@@ -12,16 +13,17 @@ import AddOrEdit from "./add-or-edit";
 import InformationBox from "@/ui/InformationBox";
 import { ContactData } from "@/types/type-data";
 import Image from "next/image";
+import { deleteContact } from "@/actions/contact-action";
 
 interface ContactInfoProps {
   contactInfo: ContactData;
-  //onDelete?: () => void;
+  onDeleteContact: () => void;
 }
 
 export default function ContactInfo({
   contactInfo,
-}: //onDelete,
-ContactInfoProps) {
+  onDeleteContact,
+}: ContactInfoProps) {
   const dialogRef = useRef<ModalHandle>(null);
   const [onEditMode, setOnEditMode] = useState(false);
   const [contactData, setContactData] = useState<ContactData>(contactInfo);
@@ -49,22 +51,28 @@ ContactInfoProps) {
       dialogRef.current.close();
     }
   }
-  function onDeleteHandler(contactData: ContactData) {
+  async function onDeleteHandler(contactData: ContactData) {
     if (!contactData.id) {
       alert("Contact did not found.");
       return;
     }
-    /* deleteContactToDB(contactData.id);
-    if (dialogRef.current) {
-      dialogRef.current.close();
-    }
-    loadContactData();
-    setOnEditMode(false);
-    if (onDelete) onDelete(); */
+    await deleteContact(contactData.id);
+    toast.success("Contact deleted successfully!", {
+      autoClose: 1000,
+      onClose: () => {
+        onCloseEditHandler();
+        onDeleteContact();
+      },
+    });
   }
 
   return (
     <>
+      <ToastContainer
+        position="top-center"
+        hideProgressBar
+        closeButton={false}
+      />
       <OpenModal ref={dialogRef}>
         {onEditMode ? (
           <AddOrEdit

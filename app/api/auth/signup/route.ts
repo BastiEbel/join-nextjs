@@ -24,10 +24,11 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  const response = NextResponse.json(
-    { user: { id: newUser.id, email: newUser.email, name: newUser.name } },
-    { status: 201 }
-  );
+  const response = NextResponse.json({
+    user: newUser.name,
+    status: 201,
+    message: "successful",
+  });
   response.cookies.set("sessionId", sessionId, {
     httpOnly: true,
     path: "/",

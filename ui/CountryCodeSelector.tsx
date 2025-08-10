@@ -3,11 +3,13 @@ import { countryCodes } from "@/constants/country-code";
 import { useState } from "react";
 
 interface CountryCodeProps {
-  zipCode?: (code: string) => void;
+  zipCode: (code: string) => void;
   value?: string;
+  instanceId?: string;
 }
 
 export default function CountryCodeSelector({
+  instanceId,
   zipCode,
   value,
 }: CountryCodeProps) {
@@ -17,20 +19,21 @@ export default function CountryCodeSelector({
     label: `(${code.code}) ${code.name} `,
   }));
 
-  /* function handleCountryCodeChange(
+  function handleCountryCodeChange(
     selectedOption: { value: string; label: string } | null
   ) {
     if (selectedOption) {
       zipCode(selectedOption.value);
     }
-  } */
+  }
 
   return (
     <div className={menuIsOpen ? "" : "countryCode-zipCode"}>
       <Select
+        instanceId={instanceId}
         options={options}
         value={options.find((option) => option.value === value) || null}
-        //onChange={handleCountryCodeChange}
+        onChange={handleCountryCodeChange}
         onMenuOpen={() => setMenuIsOpen(true)}
         onMenuClose={() => setMenuIsOpen(false)}
         getOptionLabel={(option) => option.label}

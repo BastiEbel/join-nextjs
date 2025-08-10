@@ -20,8 +20,8 @@ export async function POST(req: NextRequest) {
     },
   });
   const response = NextResponse.json({
-    user: { id: user.id, email: user.email, name: user.name },
-    message: "Login successful",
+    user: user.name,
+    message: "successful",
   });
   response.cookies.set("sessionId", sessionId, {
     httpOnly: true,

@@ -50,7 +50,9 @@ export async function signup(
       credentials: "include",
     });
     if (response.ok) {
-      return { success: true };
+      const data = await response.json();
+
+      return data;
     } else {
       const data = await response.json();
       return { errors: data.errors || { general: "Signup failed" } };
@@ -83,7 +85,7 @@ export async function login(
     };
   }
   const data = await response.json();
-  redirect("/summary");
+
   return data;
 }
 

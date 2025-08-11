@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import Image from "next/image";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 import joinLogoWhite from "@/public/images/joinLogoVector.png";
 import profilIcon from "@/public/images/profil.png";
@@ -40,6 +40,7 @@ export default function AddOrEdit({
   const [changeImage, setChangeImage] = useState(clear);
   const [cancelImage, setCancelImage] = useState(clear);
   const [countryCode, setCountryCode] = useState("+49");
+  const [hasClosed, setHasClosed] = useState(false);
 
   const [formState, formActions] = useActionState<FormState, FormData>(
     async (prevState: FormState, formData: FormData) => {
@@ -50,16 +51,19 @@ export default function AddOrEdit({
   );
 
   useEffect(() => {
-    if (formState.message === "Contact created successfully") {
+    if (formState.message === "Contact created successfully" && !hasClosed) {
+      if (onContactAdded) onContactAdded();
       toast.success("Contact added successfully!", {
-        autoClose: 1000,
-        onClose: () => {
-          onClose();
-          if (onContactAdded) onContactAdded();
-        },
+        autoClose: 500,
       });
+      setHasClosed(true);
     }
-  }, [formState, onClose, onContactAdded]);
+    onClose();
+  }, [formState.message, onContactAdded, onClose, hasClosed]);
+
+  useEffect(() => {
+    setHasClosed(false);
+  }, [addContact, contactDataInfo]);
 
   function onCancelHandler() {
     onClose();
@@ -67,11 +71,6 @@ export default function AddOrEdit({
 
   return (
     <>
-      <ToastContainer
-        position="top-center"
-        hideProgressBar
-        closeButton={false}
-      />
       <div className={styles["container-addOrEdit"]}>
         <div className={styles["oversign-addOrEdit"]}>
           <Image
@@ -146,6 +145,7 @@ export default function AddOrEdit({
                   {error}
                 </span>
               ))}
+
             <div className={styles["container-btn"]}>
               <Button
                 mouseOver={() => setChangeImage(hoverclear)}
@@ -156,7 +156,7 @@ export default function AddOrEdit({
                 Cancel
                 <Image src={changeImage} alt="X" />
               </Button>
-              <Button type="submit" className={styles["add-contact-btn"]}>
+              <Button className={styles["add-contact-btn"]}>
                 Add Contact
                 <Image src={check} alt="X" />
               </Button>

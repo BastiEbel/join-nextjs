@@ -58,7 +58,7 @@ export default function ContactInfo({
     }
     await deleteContact(contactData.id);
     toast.success("Contact deleted successfully!", {
-      autoClose: 1000,
+      autoClose: 500,
       onClose: () => {
         onCloseEditHandler();
         onDeleteContact();
@@ -76,7 +76,7 @@ export default function ContactInfo({
       <OpenModal ref={dialogRef}>
         {onEditMode ? (
           <AddOrEdit
-            /* contactDataInfo={contactData} */
+            contactDataInfo={contactData}
             onClose={onCloseEditHandler}
             addContact={false}
           />

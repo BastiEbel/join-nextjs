@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import Image from "next/image";
+
 import OpenModal, { ModalHandle } from "@/ui/OpenModal";
 import Button from "@/ui/Button";
-import Image from "next/image";
 
 import imgContact from "@/public/images/person_add.png";
 import styles from "./contact.module.css";
@@ -20,15 +21,19 @@ export default function Contact() {
   const [selectedContact, setSelectedContact] = useState<null | ContactData>(
     null
   );
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const reloadContacts = useCallback(async () => {
+    setLoading(true);
+    const contacts = await getAllContacts();
+    setContactData(contacts);
+    setLoading(false);
+    setSelectedContact(null);
+  }, []);
 
   useEffect(() => {
     reloadContacts();
-  }, []);
-
-  async function reloadContacts() {
-    await getAllContacts().then(setContactData);
-    setSelectedContact(null);
-  }
+  }, [reloadContacts]);
 
   function onContactClickHandler(contact: ContactData) {
     setSelectedContact(contact);
@@ -46,6 +51,7 @@ export default function Contact() {
       dialogRef.current.close();
     }
   }
+
   return (
     <>
       <OpenModal ref={dialogRef}>
@@ -55,7 +61,6 @@ export default function Contact() {
           onContactAdded={reloadContacts}
         />
       </OpenModal>
-
       <nav className={styles["nav-contacts"]}>
         <Button
           onClick={onAddPersonHandler}
@@ -63,8 +68,9 @@ export default function Contact() {
         >
           Add new contact <Image src={imgContact} alt="Add Person" />
         </Button>
-
-        {contactData && contactData.length > 0 ? (
+        {loading ? (
+          <p>Loading contacts...</p>
+        ) : contactData && contactData.length > 0 ? (
           <ContactList
             contacts={contactData}
             onContactClick={onContactClickHandler}

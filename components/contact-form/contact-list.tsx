@@ -34,6 +34,7 @@ export default function ContactList({
             <div>
               {contacts
                 .filter((contact) => contact.name.startsWith(letter))
+                .sort((a, b) => a.name.localeCompare(b.name))
                 .map((contact, idx) => {
                   const initialsContact = contact.name
                     .split(" ")

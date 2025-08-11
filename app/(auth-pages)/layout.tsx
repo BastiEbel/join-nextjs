@@ -2,6 +2,7 @@ import Header from "@/components/header/header";
 import Navbar from "@/components/navbar/navbar";
 import { Metadata } from "next";
 import "../globals.css";
+import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "Join App",
@@ -20,6 +21,11 @@ export default function AuthPageRootLayout({
       </head>
       <body>
         <Header />
+        <ToastContainer
+          position="top-center"
+          hideProgressBar
+          closeButton={false}
+        />
         <div style={{ display: "flex" }}>
           <Navbar />
           <div style={{ flex: 1 }}>{children}</div>

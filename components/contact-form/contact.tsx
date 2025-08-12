@@ -13,9 +13,11 @@ import ContactList from "./contact-list";
 import ContactInfo from "./contact-info";
 import { ContactData } from "@/types/type-data";
 import { getAllContacts } from "@/actions/get-data";
+import { closeModal, openModal } from "@/utils/open-modal";
+import { toast } from "react-toastify";
 
 export default function Contact() {
-  const dialogRef = useRef<ModalHandle>(null);
+  const dialogRef = useRef<ModalHandle>(null) as React.RefObject<ModalHandle>;
 
   const [contactData, setContactData] = useState<ContactData[]>([]);
   const [selectedContact, setSelectedContact] = useState<null | ContactData>(
@@ -35,21 +37,30 @@ export default function Contact() {
     reloadContacts();
   }, [reloadContacts]);
 
+  function onDeleteContactHandler() {
+    reloadContacts();
+  }
+
+  function onContactAdded() {
+    toast.success("Contact added successfully!", {
+      autoClose: 1000,
+      onClose: () => {
+        reloadContacts();
+      },
+    });
+  }
+
   function onContactClickHandler(contact: ContactData) {
     setSelectedContact(contact);
   }
 
   function onAddPersonHandler(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
-    if (dialogRef.current) {
-      dialogRef.current.open();
-    }
+    openModal(dialogRef);
   }
 
   function onCloseHandler() {
-    if (dialogRef.current) {
-      dialogRef.current.close();
-    }
+    closeModal(dialogRef);
   }
 
   return (
@@ -58,7 +69,7 @@ export default function Contact() {
         <AddOrEditContact
           onClose={onCloseHandler}
           addContact={true}
-          onContactAdded={reloadContacts}
+          onContactAdded={onContactAdded}
         />
       </OpenModal>
       <nav className={styles["nav-contacts"]}>
@@ -74,6 +85,7 @@ export default function Contact() {
           <ContactList
             contacts={contactData}
             onContactClick={onContactClickHandler}
+            activeContactId={selectedContact?.email}
           />
         ) : (
           <p>No contact data found</p>
@@ -88,8 +100,9 @@ export default function Contact() {
         <div className={styles["contact-info-text"]}>
           {selectedContact ? (
             <ContactInfo
-              onDeleteContact={reloadContacts}
+              onDeleteContact={onDeleteContactHandler}
               contactInfo={selectedContact as ContactData}
+              reloadContactList={reloadContacts}
             />
           ) : (
             <p

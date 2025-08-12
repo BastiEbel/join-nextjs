@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "../globals.css";
+import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "Join App",
@@ -16,7 +17,15 @@ export default async function RootLayout({
       <head>
         <link rel="icon" type="image/png" href="/images/joinLogoVector.png" />
       </head>
-      <body>{children}</body>
+
+      <body>
+        <ToastContainer
+          position="top-center"
+          hideProgressBar={true}
+          closeButton={false}
+        />
+        {children}
+      </body>
     </html>
   );
 }

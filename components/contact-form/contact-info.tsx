@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useRef, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import React, { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
+import Image from "next/image";
 
 import styles from "./contact-info.module.css";
 import deleteItem from "@/public/images/delete.png";
@@ -9,47 +10,58 @@ import edit from "@/public/images/edit.png";
 
 import { contactColors } from "@/constants/contact-colors";
 import OpenModal, { ModalHandle } from "@/ui/OpenModal";
-import AddOrEdit from "./add-or-edit";
 import InformationBox from "@/ui/InformationBox";
 import { ContactData } from "@/types/type-data";
-import Image from "next/image";
+
 import { deleteContact } from "@/actions/contact-action";
+import AddOrEdit from "./add-or-edit";
+import { closeModal, openModal } from "@/utils/open-modal";
+import { getInitials } from "@/utils/initials-character";
 
 interface ContactInfoProps {
   contactInfo: ContactData;
   onDeleteContact: () => void;
+  reloadContactList: () => void;
 }
 
 export default function ContactInfo({
   contactInfo,
   onDeleteContact,
+  reloadContactList,
 }: ContactInfoProps) {
-  const dialogRef = useRef<ModalHandle>(null);
+  const dialogRef = useRef<ModalHandle>(null) as React.RefObject<ModalHandle>;
   const [onEditMode, setOnEditMode] = useState(false);
   const [contactData, setContactData] = useState<ContactData>(contactInfo);
-  const initialsContact = contactInfo.name
-    .split(" ")
-    .map((name) => name.charAt(0))
-    .join("");
+  const initialsContact = getInitials(contactData.name);
 
-  function onEditHandler(contact: ContactData) {
+  useEffect(() => {
+    setContactData(contactInfo);
+  }, [contactInfo]);
+
+  function onEditHandler() {
     setOnEditMode(true);
-    if (dialogRef.current) {
-      dialogRef.current.open();
-    }
-    setContactData(contact);
+    openModal(dialogRef);
   }
-  function onOpenDeleteHandler(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    if (dialogRef.current) {
-      dialogRef.current.open();
-    }
-  }
-  function onCloseEditHandler() {
+
+  function onCloseHandler() {
     setOnEditMode(false);
-    if (dialogRef.current) {
-      dialogRef.current.close();
-    }
+    closeModal(dialogRef);
+  }
+
+  function handleContactUpdated() {
+    toast.success("Contact updated successfully!", {
+      autoClose: 1000,
+      onClose: () => {
+        reloadContactList();
+        closeModal(dialogRef);
+      },
+    });
+  }
+
+  function onOpenDeleteHandler(e: React.MouseEvent<HTMLButtonElement>) {
+    setOnEditMode(false);
+    e.preventDefault();
+    openModal(dialogRef);
   }
   async function onDeleteHandler(contactData: ContactData) {
     if (!contactData.id) {
@@ -60,7 +72,7 @@ export default function ContactInfo({
     toast.success("Contact deleted successfully!", {
       autoClose: 500,
       onClose: () => {
-        onCloseEditHandler();
+        closeModal(dialogRef);
         onDeleteContact();
       },
     });
@@ -68,24 +80,18 @@ export default function ContactInfo({
 
   return (
     <>
-      <ToastContainer
-        position="top-center"
-        hideProgressBar
-        closeButton={false}
-      />
       <OpenModal ref={dialogRef}>
         {onEditMode ? (
           <AddOrEdit
             contactDataInfo={contactData}
-            onClose={onCloseEditHandler}
+            onClose={onCloseHandler}
             addContact={false}
+            onContactUpdated={handleContactUpdated}
           />
         ) : (
           <InformationBox
             onClose={() => {
-              if (dialogRef.current) {
-                dialogRef.current.close();
-              }
+              closeModal(dialogRef);
             }}
             title="Delete Contact"
             description="You are sure do you want delete the contact?"
@@ -106,9 +112,9 @@ export default function ContactInfo({
           {initialsContact}
         </div>
         <div className={styles["name-info"]}>
-          <h1>{contactInfo.name}</h1>
+          <h1>{contactData.name}</h1>
           <div className={styles["name-info-btn"]}>
-            <span onClick={() => onEditHandler(contactInfo)}>
+            <span onClick={onEditHandler}>
               <Image src={edit} alt="Edit Contact" />
               Edit
             </span>
@@ -123,13 +129,13 @@ export default function ContactInfo({
         <h2>Contact Information</h2>
         <span>
           <b>Email:</b>
-          <p style={{ color: "blue" }}>{contactInfo.email}</p>
+          <p style={{ color: "blue" }}>{contactData.email}</p>
         </span>
         <span>
           <b>Phone:</b>
           <p>
-            {contactInfo.zipCode}
-            {contactInfo.phone}
+            {contactData.zipCode}
+            {contactData.phone}
           </p>
         </span>
       </div>

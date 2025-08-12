@@ -4,6 +4,7 @@ import { ChangeEvent, InputHTMLAttributes, ReactNode, useRef } from "react";
 import Image, { StaticImageData } from "next/image";
 
 type InputProps = {
+  defaultValue?: string;
   name?: string;
   icon?: StaticImageData;
   labelText?: ReactNode;
@@ -35,6 +36,7 @@ export default function Input({
   onChange,
   onFocus,
   onBlur,
+  defaultValue,
 }: InputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const inputId = name || placeholder || type;
@@ -50,6 +52,7 @@ export default function Input({
     onChange,
     onFocus,
     onBlur,
+    defaultValue,
   };
 
   if (type === "checkbox") {

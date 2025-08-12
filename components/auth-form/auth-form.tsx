@@ -6,7 +6,7 @@ import { redirect, usePathname, useRouter } from "next/navigation";
 
 import Input from "@/ui/Input";
 import Button from "@/ui/Button";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 import styles from "./login.module.css";
 import leftArrowIcon from "@/public/images/arrowLeft.png";
@@ -162,11 +162,6 @@ export default function AuthForm({ mode, oversign }: AuthFormProps) {
           )}
         </div>
       </form>
-      <ToastContainer
-        position="top-center"
-        hideProgressBar={true}
-        closeButton={false}
-      />
     </>
   );
 }

@@ -72,3 +72,30 @@ export async function DELETE(req: NextRequest) {
     { status: 200 }
   );
 }
+
+export async function PUT(req: NextRequest) {
+  const { name, email, phone, zipCode } = await req.json();
+  const id = req.headers.get("Contact-Id");
+
+  if (!id || !name || !email) {
+    return NextResponse.json(
+      { error: "ID, name, and email are required" },
+      { status: 400 }
+    );
+  }
+
+  const contact = await prisma.contact.update({
+    where: { id },
+    data: {
+      name,
+      email,
+      phone,
+      zipCode,
+    },
+  });
+
+  return NextResponse.json(
+    { contact, message: "Contact updated successfully" },
+    { status: 200 }
+  );
+}

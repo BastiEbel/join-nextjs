@@ -10,11 +10,13 @@ interface Contact {
 interface ContactListProps {
   contacts: Contact[];
   onContactClick: (contact: Contact) => void;
+  activeContactId?: string;
 }
 
 export default function ContactList({
   contacts,
   onContactClick,
+  activeContactId,
 }: ContactListProps) {
   const alphabet = Array.from(Array(26)).map((_, i) =>
     String.fromCharCode(i + 65)
@@ -45,7 +47,11 @@ export default function ContactList({
                     <div
                       onClick={() => onContactClick(contact)}
                       key={contact.email + idx}
-                      className={styles["contact"]}
+                      className={`${
+                        activeContactId === contact.email
+                          ? `${styles["active"]} ${styles["contact"]}`
+                          : `${styles["contact"]}`
+                      }`}
                     >
                       <div
                         className={styles["contact-item"]}

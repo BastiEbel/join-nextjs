@@ -2,7 +2,6 @@
 
 import { useActionState, useEffect, useState } from "react";
 import Image from "next/image";
-import { toast } from "react-toastify";
 
 import joinLogoWhite from "@/public/images/joinLogoVector.png";
 import profilIcon from "@/public/images/profil.png";
@@ -16,7 +15,7 @@ import styles from "./addoredit.module.css";
 import { ContactData } from "@/types/type-data";
 
 import CountryCodeSelector from "@/ui/CountryCodeSelector";
-import { addNewContact } from "@/actions/contact-action";
+import { addNewContact, editContact } from "@/actions/contact-action";
 import Button from "@/ui/Button";
 import Input from "@/ui/Input";
 
@@ -30,36 +29,58 @@ interface AddOrEditProps {
   addContact: boolean;
   contactDataInfo?: ContactData;
   onContactAdded?: () => void;
+  onContactUpdated?: () => void;
 }
+
 export default function AddOrEdit({
   onClose,
   addContact,
   contactDataInfo,
   onContactAdded,
+  onContactUpdated,
 }: AddOrEditProps) {
   const [changeImage, setChangeImage] = useState(clear);
   const [cancelImage, setCancelImage] = useState(clear);
-  const [countryCode, setCountryCode] = useState("+49");
+  const [countryCode, setCountryCode] = useState(
+    contactDataInfo?.zipCode ?? "+49"
+  );
   const [hasClosed, setHasClosed] = useState(false);
 
   const [formState, formActions] = useActionState<FormState, FormData>(
     async (prevState: FormState, formData: FormData) => {
-      const result = await addNewContact(prevState, formData);
-      return result ?? {};
+      if (addContact) {
+        return (await addNewContact(prevState, formData)) ?? {};
+      } else if (contactDataInfo?.id) {
+        formData.set("id", contactDataInfo.id);
+        return (
+          (await editContact(contactDataInfo.id, prevState, formData)) ?? {}
+        );
+      }
+      return {};
     },
     {}
   );
 
   useEffect(() => {
-    if (formState.message === "Contact created successfully" && !hasClosed) {
-      if (onContactAdded) onContactAdded();
-      toast.success("Contact added successfully!", {
-        autoClose: 500,
-      });
+    if (
+      (formState.message === "Contact created successfully" ||
+        formState.message === "Contact updated successfully") &&
+      !hasClosed
+    ) {
+      if (addContact && onContactAdded) onContactAdded();
+      if (!addContact && onContactUpdated) onContactUpdated();
+
       setHasClosed(true);
+      onClose();
     }
-    onClose();
-  }, [formState.message, onContactAdded, onClose, hasClosed]);
+  }, [
+    formState.message,
+    onContactAdded,
+    onClose,
+    hasClosed,
+    onContactUpdated,
+    addContact,
+  ]);
 
   useEffect(() => {
     setHasClosed(false);
@@ -135,6 +156,7 @@ export default function AddOrEdit({
                         ? "170 1234567"
                         : field.charAt(0).toUpperCase() + field.slice(1)
                     }
+                    defaultValue={contactDataInfo?.[field] ?? ""}
                   />
                 </div>
               )
@@ -157,7 +179,7 @@ export default function AddOrEdit({
                 <Image src={changeImage} alt="X" />
               </Button>
               <Button className={styles["add-contact-btn"]}>
-                Add Contact
+                {addContact ? "Add Contact" : "Save Changes"}
                 <Image src={check} alt="X" />
               </Button>
             </div>

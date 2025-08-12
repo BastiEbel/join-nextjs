@@ -83,3 +83,31 @@ export async function deleteContact(contactId: string): Promise<void> {
     console.error("Error deleting contact:", error);
   }
 }
+
+export async function editContact(
+  contactId: string,
+  prevState: FormState,
+  formData: FormData
+): Promise<void> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
+    const response = await fetch(`${baseUrl}/api/contacts`, {
+      method: "PUT",
+      body: JSON.stringify(Object.fromEntries(formData)),
+      headers: {
+        "Content-Type": "application/json",
+        "Contact-Id": contactId,
+      },
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to edit contact");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error editing contact:", error);
+  }
+}

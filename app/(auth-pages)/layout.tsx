@@ -21,14 +21,16 @@ export default function AuthPageRootLayout({
       </head>
       <body>
         <Header />
-        <ToastContainer
-          position="top-center"
-          hideProgressBar
-          closeButton={false}
-        />
         <div style={{ display: "flex" }}>
           <Navbar />
-          <div style={{ flex: 1 }}>{children}</div>
+          <div style={{ flex: 1 }}>
+            <ToastContainer
+              position="top-center"
+              hideProgressBar
+              closeButton={false}
+            />
+            {children}
+          </div>
         </div>
       </body>
     </html>

@@ -1,4 +1,3 @@
-"use client";
 import { stylesSelect } from "@/constants/selectbox-style";
 import Select, {
   ActionMeta,
@@ -31,6 +30,7 @@ type SelectBoxProps = {
   isSearchable: boolean;
   noOptionsMessage?: () => string;
   id: string;
+  instanceId: string;
   onChange?:
     | ((
         newValue:
@@ -53,6 +53,7 @@ type SelectBoxProps = {
 export default function SelectBox({ ...props }: SelectBoxProps) {
   return (
     <Select
+      instanceId={props.instanceId}
       id={props.id}
       value={props.value}
       options={props.options}

@@ -39,7 +39,7 @@ export default function AuthForm({ mode, oversign }: AuthFormProps) {
   useEffect(() => {
     if (formState.message === "successful") {
       toast.success(`Welcome ${formState.user}!`, {
-        autoClose: 1000,
+        autoClose: 500,
         onClose: () => {
           redirect("/summary");
         },

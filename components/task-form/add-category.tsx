@@ -5,6 +5,8 @@ import styles from "./add-category.module.css";
 
 import { useState } from "react";
 import Button from "@/ui/Button";
+import { createCategory } from "@/actions/task-action";
+import { toast } from "react-toastify";
 
 type AddCategoryProps = {
   onClose: () => void;
@@ -17,8 +19,15 @@ type Category = {
 export default function AddCategory({ onClose }: AddCategoryProps) {
   const [categoryName, setCategoryName] = useState<Category>({ name: "" });
   function onAddCategoryHandler() {
+    if (categoryName.name.trim() !== "") {
+      createCategory(categoryName.name);
+    }
+
     setCategoryName({ name: "" });
-    onClose();
+    toast.success("Category added successfully", { autoClose: 500 });
+    setTimeout(() => {
+      onClose();
+    }, 750);
   }
   return (
     <div className={styles.containerCategoryAdd}>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
-//import { MultiValue, SingleValue } from "react-select";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { MultiValue, SingleValue } from "react-select";
 
 import urgentWhite from "@/public/images/urgentwhite.png";
 import mediumWhite from "@/public/images/mediumwhite.png";
@@ -19,6 +19,9 @@ import Button from "@/ui/Button";
 import SelectBox from "@/ui/SelectBox";
 import Input from "@/ui/Input";
 import AddCategory from "./add-category";
+import { getCategories } from "@/actions/task-action";
+import { getAllContacts } from "@/actions/get-data";
+import { ContactData } from "@/types/type-data";
 
 type TaskFormProps = {
   onClose?: () => void;
@@ -29,6 +32,8 @@ export default function TaskForm({ onClose }: TaskFormProps) {
   const dialogRef = useRef<ModalHandle>(null);
   const [showMsg, setShowMsg] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [category, setCategory] = useState<{ id: string; name: string }[]>([]);
+  const [contact, setContact] = useState<ContactData[]>([]);
 
   const onChangeBtnStyle = useCallback((id: string) => {
     setChangeStyling((prev) =>
@@ -69,6 +74,26 @@ export default function TaskForm({ onClose }: TaskFormProps) {
     );
   }, []);
 
+  const fetchCategories = useCallback(async () => {
+    const categories = await getCategories();
+    setCategory(
+      Array.isArray(categories.categories) ? categories.categories : []
+    );
+  }, []);
+
+  useEffect(() => {
+    fetchCategories();
+
+    async function fetchContacts() {
+      const contacts = await getAllContacts();
+
+      setContact(Array.isArray(contacts) ? contacts : []);
+    }
+
+    fetchCategories();
+    fetchContacts();
+  }, [fetchCategories]);
+
   function onOpenCategoryHandler() {
     if (dialogRef.current) {
       dialogRef.current.open();
@@ -79,9 +104,10 @@ export default function TaskForm({ onClose }: TaskFormProps) {
     if (dialogRef.current) {
       dialogRef.current.close();
     }
+    fetchCategories();
   }
 
-  /* function onChangeContactHandler(
+  function onChangeContactHandler(
     e:
       | MultiValue<{ value: string | undefined; label: string }>
       | SingleValue<{ value: string | undefined; label: string }>
@@ -108,7 +134,7 @@ export default function TaskForm({ onClose }: TaskFormProps) {
       const singleValue = e as { value: string | undefined; label: string };
       console.log("Selected category:", singleValue);
     }
-  } */
+  }
 
   function onClearHandler() {
     onClearDataHandler();
@@ -167,11 +193,16 @@ export default function TaskForm({ onClose }: TaskFormProps) {
               </label>
               <SelectBox
                 id="contacts"
+                instanceId="contacts-select"
                 placeholder="Select contacts to assign"
                 isMulti={true}
                 isSearchable={true}
                 noOptionsMessage={() => "No contacts found"}
-                /* onChange={onChangeContactHandler} */
+                onChange={onChangeContactHandler}
+                options={contact.map((contact) => ({
+                  value: contact.id,
+                  label: contact.name,
+                }))}
               />
               {showMsg && (
                 <p style={{ color: "lightred" }}>
@@ -250,14 +281,15 @@ export default function TaskForm({ onClose }: TaskFormProps) {
               </div>
               <SelectBox
                 id="category-select"
+                instanceId="category-select"
                 isSearchable={false}
-                /* options={categories.map((category) => ({
+                options={category.map((category) => ({
                   value: category.id,
                   label: category.name,
                 }))}
-                value={taskData.category || null} */
+                /* value={category || null} */
                 placeholder="Select task category"
-                /* onChange={onChangeCategoryHandler} */
+                onChange={onChangeCategoryHandler}
                 noOptionsMessage={() => "No categories found"}
               />
             </div>
